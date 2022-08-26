@@ -1,1 +1,1 @@
-Hello, Earthlings!
+Hello, Hexlet! How are you?
