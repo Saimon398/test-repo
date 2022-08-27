@@ -3,7 +3,11 @@
   "version": "0.0.1",
   "type": "module",
   "description": "Say Greetings to everyone who installs this package.",
-  "keywords": ["greetings", "package", "installation"],
+  "keywords": [
+    "greetings",
+    "package",
+    "installation"
+  ],
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -17,5 +21,8 @@
   "bugs": {
     "url": "https://github.com/Saimon398/test-repo/issues"
   },
-  "homepage": "https://github.com/Saimon398/test-repo#readme"
+  "homepage": "https://github.com/Saimon398/test-repo#readme",
+  "dependencies": {
+    "lodash": "^4.17.21"
+  }
 }
