@@ -24,5 +24,8 @@
   "homepage": "https://github.com/Saimon398/test-repo#readme",
   "dependencies": {
     "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "prettier": "^2.7.1"
   }
 }
