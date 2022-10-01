@@ -1,253 +1,347 @@
-// import _ from 'lodash';
+// // Информация о пользователе может быть представлена объектом со свойствами
+import yup from 'yup';
 
-// /**
-//  * @description compares objects TEST 4
-//  * @param {Object {}} obj1 first object
-//  * @param {Object {}} obj2 second object
-//  * @returns {Boolean}
-//  */
-// const compareObjects = (obj1, obj2) => {
-//   const props = ['name', 'state', 'website'];
-//   let isSame = true;
-//   for (const property of props) {
-//     isSame = obj1[property] === obj2[property] && isSame;
+// // Simple 
+// const student = {
+//   name: 'Alex',
+//   birthday: '12.03.1996',
+//   encryptedPassword: 'somepassword398',
+//   socialNetworks: {
+//     twitter: 'twitter.otadameskapizm.com',
+//     facebook: 'facebook.com'
+//   },
+//   currentGroup: 'fullstack-development',
+//   finishedCourses: ['functions', 'objects', 'oop'],
+
+//   addFinishedCourse (finishedCourse) {
+//     this.finishedCourses.push(finishedCourse);
 //   }
-//   return isSame;
 // };
 
-// // const getLastItem = (arr) => {
-// //   const indexOfLast = arr.length - 1;
-// //   const lastItem = arr[indexOfLast];
-// //   return lastItem;
+// // Первый подход работы - процедурное программирование
+// const setPassword = (student, newPassword) => {
+//   student.encryptedPassword = newPassword;
+// };
+// const addFinishedCourse = (student, finishedCourse) => {
+//   student.finishedCourses.push(finishedCourse);
+// };
+// addFinishedCourse(student, 'arrays');
+// setPassword(student, 'newpassword');
+
+// // Добавлять методы
+// student.addFinishedCourse('tests');
+
+// /**
+//  * Инкапсуляция - объединение функций и данных в рамках одной структуры,
+//  * внутреннее состояние которой скрыто от внешнего мира.
+//  * 
+//  * Существует такое понятие, как контекст - this. Он работает по разному
+//  * для обычных и стрелочных функций. Он может изменится у метода в JS.
+//  * Если мы передаем в один метод ссылку на другой метод - позднее привязывание
+//  * Function.ptototype.call(thisArg, [arg1, ...])
+//  * 
+//  * Контекст обычных функций завиист от места вызова, а стрелочных - от места их определения
+//  */
+
+// // Задание 3
+
+// // Контекст
+// const bind = (context, fn) => {
+//   return (...args) => fn.apply(context, args);
+// };
+
+
+// /**
+//  * Прототипы - это механизм, который оказывает влияние на то, как работают 
+//  * объекты в JS. В языке с каждым объектом связан прототип - обычный объект, 
+//  * который хранится в специальном служебном поле [[prototype]].
+//  * 
+//  * 
+//  * Как работает вызов свойств?. Если в объекте свойство не было найдено, 
+//  * то он ищет в прототипе, потом в прототипе прототипа и т д 
+//  * 
+//  * 
+//  * В итоге - прототип - это объект, который находится в свойстве prototype
+//  * Прототипы - низкоуровневый механизм. При использовании приходиться писать
+//  * много однообразного кода, особенно для реализации цепочек. По этой причине
+//  * внедрили класс 
+//  */
+
+// // Упаковка и Распаковка (Boxing)
+
+// // КЛАССНАЯ ЗАДАЧА!!!
+// // const magic = (...numbers) => { // Принимает на вход любое число аргументов
+// //   const sum = numbers.reduce((acc, number) => acc += number, 0); // Суммирует эти аргументы
+// //   const innerMagic = (...rest) => magic(sum, ...rest); // Функция, которая принимает любое число аргументов - и добавляет к ним сумму
+// //   innerMagic.valueOf() = () => sum;
+// //   return innerMagic;
 // // };
 
-// // const getFileInfo = (filepath) => {
-// //   const parts = filepath.split('/');
-// //   const filename = getLastItem(parts);
-// //   const extension = getLastItem(filename.split('.'));
-
-// //   const info = {filename, extension};
-// //   return info;
+// // Класс с валидаторами - Хранение конфигурации 
+// // class PasswordValidator {
+// //   constructor(options = {}) {
+// //     this.options = {
+// //       minLength: 8,
+// //       containNumbers: true,
+// //       ...options,
+// //     }
+// //   }
+// //   validate (password) {
+// //     const errors = {};
+// //     if(password.length < this.options.minLength) {
+// //       errors.minLength = 'too small';
+// //     }
+// //     if(this.options.containNumbers) { // Требование выключено или включено
+// //       if(!hasNumber(password)) {
+// //         errors.containNumbers = 'should contain at least one number';
+// //       }
+// //     }
+// //     return errors;
+// //   }
 // // };
 
-// /**
-//  * @description gets info about domain
-//  * @param {String} domain
-//  * @returns {Object {}}
-//  */
-// const getDomainInfo_1 = (domain) => {
-//   const info = {};
 
-//   if (!domain.startsWith('http')) {
-//     info.scheme = 'http';
-//     info.name = domain;
-//   } else {
-//     const [scheme, name] = domain.split('://');
-//     info.scheme = scheme;
-//     info.name = name;
+// // Иногда нужно временно установить опции, которые отличаются от тех, что были 
+// // переданы в конструктор. Есть 3 возможных решения 
+
+// // Первое - Создание нового объекта
+// // Такой способ ведет к тому, что придется дублировать общие опции, а тестирование
+// // станет затруднительным
+
+
+// // Вариант 2 - Сеттер. Ведет к проблемам
+
+// // А здесь мы можем забыть его включить
+// // Такой код, в котором сначала что-то меняется, а потом еще раз говорит о проблеме
+// // с архитектурой
+
+// // Вариант 3 - Передача дополнительного параметра на время вызова
+
+
+
+// // class Truncate {
+// //   static defaultOptions = {
+// //     separator: '...',
+// //     length: 200,
+// //   };
+// //   constructor (options = {}) {
+// //     this.options = { ...this.constructor.defaultOptions, ...options };
+// //   }
+
+// //   truncate (text, userOptions = {}) {
+// //     const { length, separator } = { ...this.options, ...userOptions };
+// //     return (text.length <= length) ? text : `${text.substring(0, length)}${separator}`;
+// //   }
+
+// // };
+
+
+// // Объекты-сущности
+
+// /**
+//  * Время жизни - подобные объекты создаются не ради одноразового испольхования,
+//  * а живут какое то время. Например, пользователи создаются при регистрации,
+//  * а потом живут в системе до удаления. 
+//  * 
+//  * 
+//  * Идентификация. При работе с сущностями вводят искусственные идентификаторы, 
+//  * которые формирует база данных
+//  */
+
+// class Url {
+//   constructor(url) {
+//     this.url = new URL(url);
 //   }
-//   return info;
-// };
 
-// /**
-//  * @description gets info about domain
-//  * @param {String} domain
-//  * @returns {Object {}}
-//  */
-// const getDomainInfo_2 = (domain) => {
-//   let scheme = '';
-//   if (domain.startsWith('https://')) {
-//     scheme = 'https';
-//   } else {
-//     scheme = 'http';
+//   getScheme () {
+//     const protocolWithPoint = this.url.protocol;
+//     return protocolWithPoint.substring(0, protocolWithPoint.length - 1);
 //   }
-//   const name = domain.replace(`${scheme}://`, '');
-//   return { scheme, name };
-// };
 
-// // Проверка существования свойств
-// // Нужно проверить наличие свойства и выполнить особую логику, в случае его отсутствия
-// /**
-//  * @description counts words in array
-//  * @param {} text
-//  * @returns
-//  */
-// const countWords = (text) => {
-//   const words = {};
-//   if (text.length !== 0) {
-//     for (const word of text.split(' ')) {
-//       const loweredWord = word.toLowerCase();
-//       words[loweredWord] = (words[loweredWord] ?? 0) + 1;
-//     }
+//   getHostName () {
+//     return this.url.hostname;
 //   }
-//   return words;
-// };
 
-// /**
-//  * @description returns object with specific props
-//  * @param {Object {}} data
-//  * @param {Object []} requiredProps
-//  * @returns
-//  */
-// const pick = (data, requiredProps) => {
-//   const result = {};
-//   for (const requiredProp of requiredProps) {
-//     if (Object.hasOwn(data, requiredProp)) {
-//       result[requiredProp] = data[requiredProp];
-//     }
+//   getQueryParams () {
+//     return this.
 //   }
-//   return result;
-// };
+// }
+// const url1 = new Url('https://yandex.ru');
 
-// // Вложенные объекты
-// // Для вывода на экран объект с таким уровнем вложенности нужно воспользоваться
-// // JSON.stringify(obj)
-// const obj1 = { a: { b: { c: { key: 'value' }, e: [1, 2] } } };
+// console.log(url1.getHostName());
 
-// // Очень усложняется проверка наличия свойства
-// // Такое нужно решать либо в лоб, либо через оператор опциональной последовательности
-// // Он возвращает искомое значение или undefined
 
-// // const obj2 = {};
-// // console.log(obj2?.one?.two ?? 'defaultValue');
+// Нужно написать класс-обертку, который является API для URL
+export default class Url {
+  constructor(url) {
+    this.url = new URL(url);
+    this.url.scheme = this.url.protocol.slice(0, -1);
+    this.url.queryParams = Object.fromEntries(this.url.searchParams);
+  }
 
-// /**
-//  * @description returns searched property
-//  * @param {Object {}} data
-//  * @param {Object []} keys
-//  * @returns
-//  */
-// const get = (data, keys) => {
-//   for (const key of keys) {
-//     if (Object.hasOwn(data, key)) {
-//       data = data[key];
-//     } else {
-//       return null;
-//     }
+  getScheme() {
+    return this.url.scheme;
+  }
+
+  getHostName() {
+    return this.url.hostname;
+  }
+
+  getQueryParams() {
+    return this.url.queryParams;
+  }
+
+  getQueryParam(key, defaultValue = null) {
+    return this.url.searchParams.get(key) ?? defaultValue;
+  }
+
+  toString() {
+    return this.url.toString();
+  }
+
+  equals(url) {
+    return (this.toString() === url.toString());
+  }
+}
+
+
+// Текущий интерфейс
+// Существует ровно 2 способа создать такой интерфейс на техническом 
+// уровне
+
+// Первый способ - на вохврате this 
+
+// class Collection {
+//   constructor (collection) {
+//     this.collection = collection;
 //   }
-//   return data ?? null;
-// };
 
-// /**
-//  * @description fills new object by allowed props from source
-//  * @param {Object {}} data
-//  * @param {Object []} allowedKeys
-//  * @param {Object {}} source
-//  */
-// const fill = (data, allowedKeys, source) => {
-//   const filteredData = allowedKeys.length > 0 ? _.pick(source, allowedKeys) : source;
-//   Object.assign(data, filteredData);
-// };
-
-// // Копирование объектов
-
-// const user = { name: 'Tirion', email: 'support@hexlet.io', age: 44 };
-
-// // Поверхностное копирование
-// const copyOfUser = { ...user }; // Новый объек
-
-// // Глубокое копирование
-
-// /**
-//  * @description deep clone of object
-//  * @param {Object {}} data
-//  * @returns
-//  */
-// const cloneDeep = (data) => {
-//   const copy = {};
-//   for (const [key, value] of Object.entries(data)) {
-//     copy[key] = typeof value === 'object' ? cloneDeep(value) : value;
+//   map(callback) {
+//     this.collection = this.collection.map(callback);
+//     return this;
 //   }
-//   return copy;
+
+//   filter(callback) {
+//     this.collection = this.collection.filter(callback);
+//     return this;
+//   }
+
+//   all() {
+//     return this.collection;
+//   }
 // };
 
-// /**
-//  * @description creates company descripiton as object
-//  * @param {String} name
-//  * @param {Object} extraProps
-//  * @returns {Object}
-//  */
-// const make = (name, extraProps) => ({
-//   name, state: 'moderating', createdAt: Date.now(), ...extraProps,
+
+// Здесь мы поменяли коллекцию - это серьезный недостаток
+// cars
+//   .filter((car) => car.year > 2013)
+//   .map((car) => car.model);
+
+
+// На практике используется другой подход
+
+// class Collection {
+//   constructor (collection) {
+//     this.collection = collection;
+//   }
+//   map(callback) {
+//     const newColl = this.collection.map(callback);
+//     return new Collection(newColl);
+//   }
+
+//   filter(callback) {
+//     const newColl = this.collection.filter(callback);
+
+//     return new Collection(newColl);
+//   }
+
+//   all() {
+//     return this.collection;
+//   }
+// };
+
+const countries = [
+  { name: 'Miami', country: 'usa' },
+  { name: 'samarA', country: '  ruSsiA' },
+  { name: 'Moscow ', country: ' Russia' },
+];
+
+const normalize = (citiesByCountries) => {
+  return citiesByCountries
+  .map(({ name, country }) => {
+    return { name: name.toLowerCase(), country: country.toLowerCase() };
+  })
+  .map(({ name, country }) => {
+    return { name: name.trim(), country: country.trim() };
+  })
+  .map(({name, country}) => [country, name])
+  .sort()
+  .reduce((acc, [country, city]) => {
+    const citiesAcc = acc[country] ?? []; // Если его нет, то создаем свойство
+    const cities = citiesAcc.concat(city); // После добавления (или в старый) добавлям город
+    const uniqueCities = new Set(cities); // Удаляем повторения
+    return { ...acc, [country]: [...uniqueCities]};
+  }, {});
+};
+
+// Конфигурация с параметрами, Текущий интерфейс, Обертка, Сборщик, Прокси
+
+// Сборщики - библиотка yup для проверки валидности данных
+// Задание на проверку валидности книг в библиотеке
+// Создаем схему проверки книг
+// const schema = yup.object().shape({
+//   name: yup.string().required(), // Имя должно обязательно присутствовать 
+//   author: yup.string().required(), // Автор-строка 
+//   pagesCount: yup.number().positive().integer(), // Число страниц
+//   link: yup.string().min(1).url(),
+//   genre: yup.string().oneOf(genres),
 // });
 
-// // Деструктуризация в объектах
+// const getInvalidBooks = (books) => books.filter((book) => !schema.isValidSync(book));
 
-// /**
-//  * @description gets names of users and sorts them
-//  * @param {Object []} users users
-//  * @returns {Object []} users'names
-//  */
-// const getSortedNames = (users) => {
-//   const sortedNames = [];
-//   for (const { name } of users) {
-//     sortedNames.push(name);
+// const proxy = new Proxy(target, handler); // target - объект, для которого нужно сделать прокси-объект
+// handler - объект с обработчиками
+
+// Объект с обработчиками
+
+// class Course {
+//   constructor(name) {
+//     this._name = name;
 //   }
-//   return sortedNames.sort();
+ 
+//   getName() {
+//     return this._name;
+//   }
 // };
 
-// /**
-//  * @description finds match between book from library and searched book
-//  * @param {Object []} books library
-//  * @param {Object {}} where searched book
-//  * @returns
-//  */
-// const findWhere = (books, where) => {
-//   let flag = true;
-//   for (const book of books) {
-//     for (const key of Object.keys(where)) {
-//       flag = where[key] === book[key] && flag; // Если он один раз станет false - это насовсем
-//     }
-//     if (flag) {
-//       return book;
-//     }
-//     flag = true;
+// const validateProperty = (target, name) => {
+//   if(!(name in target)) {
+//     throw new Error(`${name} does not exist`);
 //   }
-//   return null;
+//   if (name.startsWith('_')) {
+//     throw new Error(`${name} is protected`);
+//   }
 // };
 
-// // ПОСМОТРЕТЬ ДРУГОЕ РЕШЕНИЕ
+// const protect = (course) => {
+//   const handlers = {
+//     get: (target, name) => {
+//       // Здесь проверяется на валидность
+//       validateProperty(target, name);
+//       const property = target[name];
 
-// /**
-//  * @description checks if possible to build word  O(N + M);
-//  * @param {String} letters
-//  * @param {String} word
-//  * @returns
-//  */
-// const isPossibleToMakeWord = (letters, word) => {
-//   const letterCounter = {};
-//   const lettersInWord = {};
-//   for (const letter of letters.toLowerCase()) {
-//     letterCounter[letter] = (letterCounter[letter] ?? 0) + 1;
-//   }
-//   for (const letter of word.toLowerCase()) {
-//     lettersInWord[letter] = (lettersInWord[letter] ?? 0) + 1;
-//   }
-//   for (const letter of word.toLowerCase()) {
-//     if (letterCounter[letter] < lettersInWord[letter] || letterCounter[letter] === undefined) {
-//       return false;
+//       return typeof property === 'function' ? property.bind(course) : property;
+//     },
+
+//     set: (target, name, value) => {
+//       validateProperty(target, name);
+//       target[name] = value;
+
+//       return true;
 //     }
 //   }
-//   return true;
-// };
+// }
 
-// // ВЫЧИСЛИТЕЛЬ ОТЛИЧИЙ
 
-// /**
-//  * @description gets differences between two objects
-//  * @param {Object {}} first
-//  * @param {Object {}} second
-//  * @returns {Object {}}
-//  */
-// const genDiff = (first, second) => {
-//   const result = {};
-//   const mergedKeys = Object.keys({ ...first, ...second });
-//   for (const key of mergedKeys) {
-//     if (first[key] && second[key]) {
-//       result[key] = first[key] === second[key] ? 'unchanged' : 'changed';
-//     } else {
-//       result[key] = first[key] ? 'deleted' : 'added';
-//     }
-//   }
-//   return result;
-// };
+
+

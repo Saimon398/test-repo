@@ -27,7 +27,10 @@
   },
   "homepage": "https://github.com/Saimon398/test-repo#readme",
   "dependencies": {
-    "lodash": "^4.17.21"
+    "js-yaml": "^4.1.0",
+    "lodash": "^4.17.21",
+    "pattern-matching-js": "^0.2.0",
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.1.2",
