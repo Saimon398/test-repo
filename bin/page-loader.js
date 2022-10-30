@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { program } from 'commander';
-import Listr from 'listr';
+import pageloader from '../asynchronic.js';
 
 program
   .name('page-loader')
@@ -10,7 +10,7 @@ program
   .argument('<url')
   .action((url) => {
     const dirpath = program.opts().output;
-    pageLoader(url, dirpath);
+    pageloader(url, dirpath);
   });
 
 program.parse(process.argv);

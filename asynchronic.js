@@ -2,7 +2,6 @@ import axios from 'axios';
 import fs from 'fs/promises';
 import path from 'path';
 import debug from 'debug';
-import 'axios-debug-log';
 import {
   getOutputName, loadLocalAssets, updateAttributes, parse,
 } from './src/utils.js';
@@ -38,11 +37,10 @@ export default (url, dirpath) => {
       absoluteFilepath = path.join(absoluteDirpath, outputFilename);
       return fs.writeFile(absoluteFilepath, markup, 'utf-8');
     })
-    .then(() => loadLocalAssets(links))
+    .then(() => loadLocalAssets(links)) // Здесь происходит вывод заданий !!!
     .then((responses) => Promise.all(responses.map(({ config, data }) => {
-      // ВОТ ЗДЕСЬ МОЖНО ПРОПИСАТЬ ЗАДАНИЯ, КОТОРЫЕ БУДУТ ВЫПОЛНЯТЬСЯ
       const extension = path.extname(config.url);
-      const sourceName = getOutputFilename(config.url, extension);
+      const sourceName = getOutputName(config.url, extension);
       const absoluteSourcePath = path.join(absoluteDirpath, sourceName);
       return fs.writeFile(absoluteSourcePath, data, 'utf-8');
     })))

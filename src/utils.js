@@ -77,18 +77,23 @@ export const loadLocalAssets = (links) => {
   //   responseType: 'arraybuffer',
   // }));
 
+  const requests = [];
   const promises = paths.map((path) => ({
-    title: `${path}`, // В качестве названия будет фигурировать имя локального ресурса
-    task: () => console.log('1')
+    title: `${path}`, 
+    task: () => axios({
+      method: 'get',
+      url: `${path}`,
+      responseType: 'arraybuffer'
+    })
+    .then((request) => requests.push(request)) // Каждый промис добавляется в requets
   }));
-
   // Формируем список заданий: 1 - список заданий (объекты), 2 - конфигурация
   const tasks = new Listr(promises, { concurrent: true, exitOnError: false });
 
-  return Promise.all(promises)
-  .then(() => tasks.run())
-  .catch((e) => console.error(e));
-};
+  return tasks.run()
+    .then(() => Promise.all(requests))
+    .catch((error) => console.error(error));
+}
 
 /**
  * @description Change Names of Local Attributes to The New Ones
