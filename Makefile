@@ -1,4 +1,8 @@
 lint:
 	npx eslint . # Проверяет код на соотвествие стандарту Airbnb
-install-dev:
-	npm install --save-dev
+install:
+	npm ci
+test: 
+	NODE_OPTIONS=--experimental-vm-modules npx jest .
+test-coverage:
+	npm test -- --coverage --coverageProvider=v8

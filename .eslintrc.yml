@@ -6,4 +6,9 @@ extends:
 parserOptions:
   ecmaVersion: latest
   sourceType: module
-rules: {}
+rules:
+  no-console: 0
+  import/extensions:
+    - error
+    - js: always
+  max-len: [2, { "code": 150 }]
